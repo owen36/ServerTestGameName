@@ -8,14 +8,14 @@ public class SetupLocalPlayer : NetworkBehaviour {
 
     public CarUserControl driveScript;
     //public Text playerNamePrefab;
-    //public Transform nameTransform;
-    //public Transform camTransform;
+    public Camera camPrefab;
+    public Transform camTransform;
     public Canvas playerCanvas;
     public GameType currentGame;
 
 
-    private Text playerName;
-    private string pName = "Player";
+    //private Text playerName;
+    //private string pName = "Player";
     private Camera cam;
     
 
@@ -28,13 +28,13 @@ public class SetupLocalPlayer : NetworkBehaviour {
 
     private void OnGUI()
     {
-        if(isLocalPlayer)
-        {
-            pName = GUI.TextField(new Rect(25, 15, 100, 25), "Player");
-            if (GUI.Button(new Rect(130, 15, 60, 25), "Apply"))
-                CmdChangeName(pName);
+       // if(isLocalPlayer)
+       // {
+       //     pName = GUI.TextField(new Rect(25, 15, 100, 25), "Player");
+       //     if (GUI.Button(new Rect(130, 15, 60, 25), "Apply"))
+       //         CmdChangeName(pName);
            
-        }
+       // }
 
 #if UNITY_ANDROID || UNITY_EDITOR
         if(playerCanvas != null)
@@ -49,11 +49,11 @@ public class SetupLocalPlayer : NetworkBehaviour {
     }
 
 
-    [Command]
-    private void CmdChangeName(string pName)
-    {
-        playerName.text = pName;
-    }
+   // [Command]
+//private void CmdChangeName(string pName)
+   // {
+    //  //  playerName.text = pName;
+    //}
 
 
     // Use this for initialization
@@ -66,11 +66,13 @@ public class SetupLocalPlayer : NetworkBehaviour {
             else
             {
                 driveScript.enabled = true;
-                cam = Camera.main;
+				cam = Instantiate(camPrefab);
+				Camera360Follow follow = cam.GetComponent<Camera360Follow>();
+				follow.target = camTransform;
             }
         }
 
-        GameObject canvas = GameObject.FindWithTag("Finish");
+        //GameObject canvas = GameObject.FindWithTag("Finish");
         //playerName = Instantiate(playerNamePrefab, Vector3.zero, Quaternion.identity) as Text;
         //playerName.transform.SetParent(canvas.transform);
     }
@@ -90,13 +92,13 @@ public class SetupLocalPlayer : NetworkBehaviour {
         //{
         //    cam.transform.position = camTransform.position;
         //    cam.transform.rotation = camTransform.rotation;
-       // }
+        //}
     }
 
-    private void OnDestroy()
-    {
-        if (playerName != null)
-            Destroy(playerName.gameObject);
-    }
+   // private void OnDestroy()
+   // {
+       // if (playerName != null)
+       //     Destroy(playerName.gameObject);
+   // }
 
 }
