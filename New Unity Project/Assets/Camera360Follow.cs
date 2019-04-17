@@ -5,11 +5,11 @@ using UnityEngine;
 public class Camera360Follow : MonoBehaviour {
 
 	public Transform target;
-	private float distance = 2f;
-	private float height = 1f;
+    public float distance = 2f;
+    public float height = 1f;
 	public Vector3 lookOffset = new Vector3 (0,1,0);
-	private float camSpeed = 10f;
-	private float rotSpeed = 10f;
+    public float camSpeed = 10f;
+    public float rotSpeed = 10f;
 
 	
 	// Update is called once per frame

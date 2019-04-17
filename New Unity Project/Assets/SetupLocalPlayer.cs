@@ -17,7 +17,7 @@ public class SetupLocalPlayer : NetworkBehaviour {
     //private Text playerName;
     //private string pName = "Player";
     private Camera cam;
-    
+    private Rigidbody rb;
 
     public enum GameType
     {
@@ -69,6 +69,7 @@ public class SetupLocalPlayer : NetworkBehaviour {
 				cam = Instantiate(camPrefab);
 				Camera360Follow follow = cam.GetComponent<Camera360Follow>();
 				follow.target = camTransform;
+                rb = this.GetComponent<Rigidbody>();
             }
         }
 
@@ -95,10 +96,29 @@ public class SetupLocalPlayer : NetworkBehaviour {
         //}
     }
 
-   // private void OnDestroy()
-   // {
-       // if (playerName != null)
-       //     Destroy(playerName.gameObject);
-   // }
+
+
+    void OnCollisionEnter(Collision collision)
+    {
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            Debug.DrawRay(contact.point, contact.normal, Color.white);
+        }
+        if (collision.gameObject.tag == "Player" && rb != null)
+        {
+            Rigidbody otherRb = collision.gameObject.GetComponent<Rigidbody>();
+            if(otherRb != null)
+                otherRb.AddForceAtPosition(collision.relativeVelocity * 1000, collision.transform.position, ForceMode.VelocityChange);
+
+
+            rb.AddForceAtPosition(collision.relativeVelocity, collision.transform.position, ForceMode.VelocityChange);
+        }
+    }
+
+    // private void OnDestroy()
+    // {
+    // if (playerName != null)
+    //     Destroy(playerName.gameObject);
+    // }
 
 }
