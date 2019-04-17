@@ -2,13 +2,14 @@
 using UnityEngine.UI;
 using UnityEngine;
 using System;
+using UnityStandardAssets.Vehicles.Car;
 
 public class SetupLocalPlayer : NetworkBehaviour {
 
-    public Drive driveScript;
-    public Text playerNamePrefab;
-    public Transform nameTransform;
-    public Transform camTransform;
+    public CarUserControl driveScript;
+    //public Text playerNamePrefab;
+    //public Transform nameTransform;
+    //public Transform camTransform;
     public Canvas playerCanvas;
     public GameType currentGame;
 
@@ -36,7 +37,8 @@ public class SetupLocalPlayer : NetworkBehaviour {
         }
 
 #if UNITY_ANDROID || UNITY_EDITOR
-        playerCanvas.gameObject.SetActive(isLocalPlayer);
+        if(playerCanvas != null)
+            playerCanvas.gameObject.SetActive(isLocalPlayer);
 #endif
     }
 
@@ -57,36 +59,38 @@ public class SetupLocalPlayer : NetworkBehaviour {
     // Use this for initialization
     void Start ()
     {
-        if (!isLocalPlayer) 
-            driveScript.enabled = false;
-        else
+        if (currentGame == GameType.MonsterTrucks)
         {
-            driveScript.enabled = true;
-           cam = Camera.main;
+            if (!isLocalPlayer)
+                driveScript.enabled = false;
+            else
+            {
+                driveScript.enabled = true;
+                cam = Camera.main;
+            }
         }
 
-
         GameObject canvas = GameObject.FindWithTag("Finish");
-        playerName = Instantiate(playerNamePrefab, Vector3.zero, Quaternion.identity) as Text;
-        playerName.transform.SetParent(canvas.transform);
+        //playerName = Instantiate(playerNamePrefab, Vector3.zero, Quaternion.identity) as Text;
+        //playerName.transform.SetParent(canvas.transform);
     }
 
     private void LateUpdate()
     {
-        Vector3 namePos = Camera.main.WorldToScreenPoint(nameTransform.position);
+        //Vector3 namePos = Camera.main.WorldToScreenPoint(nameTransform.position);
 
-        if (playerName != null)
-            playerName.transform.position = namePos;
+       // if (playerName != null)
+        //    playerName.transform.position = namePos;
 
-        if (isLocalPlayer && playerName != null)
-            playerName.enabled = false;
+       // if (isLocalPlayer && playerName != null)
+       //     playerName.enabled = false;
 
 
-        if (cam != null)
-        {
-            cam.transform.position = camTransform.position;
-            cam.transform.rotation = camTransform.rotation;
-        }
+        //if (cam != null)
+        //{
+        //    cam.transform.position = camTransform.position;
+        //    cam.transform.rotation = camTransform.rotation;
+       // }
     }
 
     private void OnDestroy()

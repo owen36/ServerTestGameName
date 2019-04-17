@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class CarInputController : MonoBehaviour {
 
@@ -42,7 +43,7 @@ public class CarInputController : MonoBehaviour {
     }
 
 	public void StartEngine () {
-		StartCoroutine("StartEngineCor");
+		//StartCoroutine("StartEngineCor");
 	}
 
 	public void StopEngine () {
@@ -50,28 +51,29 @@ public class CarInputController : MonoBehaviour {
 		engineWorking = false;
 	}
 
-	IEnumerator StartEngineCor () {
-		if (StartEngineClip != null) {
-			audioSource.clip = StartEngineClip;
-			audioSource.Play();
-			yield return new WaitForSeconds(StartEngineClip.length);
-		}
-		if (WorkingEngineClip != null) {
-			audioSource.clip = WorkingEngineClip;
-			audioSource.loop = true;
-			audioSource.Play();
-		}
-		engineWorking = true;
-	}
+	//IEnumerator StartEngineCor () {
+	//	//if (StartEngineClip != null) {
+	//	//	audioSource.clip = StartEngineClip;
+	//	//	audioSource.Play();
+	//	//	yield return new WaitForSeconds(StartEngineClip.length);
+	//	//}
+	//	//if (WorkingEngineClip != null) {
+	//	//	audioSource.clip = WorkingEngineClip;
+	//	//	audioSource.loop = true;
+	//	//	audioSource.Play();
+	//	//}
+	//	engineWorking = true;
+	//}
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.E) && carInFocus) {
-			if (engineWorking) {
-				StopEngine();
-			} else {
+		//if (carInFocus) {
+		//	if (engineWorking) {
+		//		StopEngine();
+		//	} else {
 				StartEngine();
-			}
-		}
-	}
+        engineWorking = true;
+        //	}
+        //}
+    }
 	void FixedUpdate() {
 		Vector3 position;
 		Quaternion rotation;
@@ -87,7 +89,7 @@ public class CarInputController : MonoBehaviour {
 
 			if (carInFocus) {
 				if (engineWorking) {
-					float inputVertical = Input.GetAxis("Vertical");
+					float inputVertical = CrossPlatformInputManager.GetAxis("Vertical");
 					if (wheels[i].wheelCollider.rpm < 0.01f && inputVertical < 0f || wheels[i].wheelCollider.rpm >= -0.01f && inputVertical >= 0f) {
 						wheels[i].wheelCollider.brakeTorque = 0;
 						wheels[i].wheelCollider.motorTorque = inputVertical * wheels[i].wheelPower;
@@ -99,8 +101,8 @@ public class CarInputController : MonoBehaviour {
 					wheels[i].wheelCollider.motorTorque = 0;
 				}
 
-				wheels[i].wheelCollider.steerAngle = Input.GetAxis("Horizontal") * wheels[i].angleTurningWheel;
-				if (Input.GetAxis("Jump") != 0) {
+				wheels[i].wheelCollider.steerAngle = CrossPlatformInputManager.GetAxis("Horizontal") * wheels[i].angleTurningWheel;
+				if (CrossPlatformInputManager.GetAxis("Jump") != 0) {
 					WheelBrake(wheels[i].wheelCollider);
 				}
 			} else {
