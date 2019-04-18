@@ -19,6 +19,14 @@ public class SetupLocalPlayer : NetworkBehaviour {
     private Camera cam;
     private Rigidbody rb;
 
+	[SyncVar (hook = "OnForceApplied")]
+	public Vector3 volocity;
+
+	public void OnForceApplied(Vector3 rigidBody)
+	{
+		rb.velocity = rigidBody;
+	}
+
     public enum GameType
     {
         HorseRaces,
@@ -70,6 +78,8 @@ public class SetupLocalPlayer : NetworkBehaviour {
 				Camera360Follow follow = cam.GetComponent<Camera360Follow>();
 				follow.target = camTransform;
                 rb = this.GetComponent<Rigidbody>();
+
+				volocity = rb.velocity;
             }
         }
 
@@ -99,26 +109,16 @@ public class SetupLocalPlayer : NetworkBehaviour {
 
 
     void OnCollisionEnter(Collision collision)
-    {
-        foreach (ContactPoint contact in collision.contacts)
+	{		
+		if (collision.gameObject.tag == "Player" && isLocalPlayer)
         {
-            Debug.DrawRay(contact.point, contact.normal, Color.white);
-        }
-        if (collision.gameObject.tag == "Player" && rb != null)
-        {
-            Rigidbody otherRb = collision.gameObject.GetComponent<Rigidbody>();
-            if(otherRb != null)
-                otherRb.AddForceAtPosition(collision.relativeVelocity * 1000, collision.transform.position, ForceMode.VelocityChange);
-
-
-            rb.AddForceAtPosition(collision.relativeVelocity, collision.transform.position, ForceMode.VelocityChange);
+			CmdApplyForce (collision.relativeVelocity, collision.transform.position);
         }
     }
 
-    // private void OnDestroy()
-    // {
-    // if (playerName != null)
-    //     Destroy(playerName.gameObject);
-    // }
-
+	[Command]
+	public void CmdApplyForce(Vector3 velocity, Vector3 position)
+	{
+		this.rb.AddForceAtPosition (velocity, position, ForceMode.Impulse);
+	}
 }
